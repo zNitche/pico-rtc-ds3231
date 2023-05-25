@@ -43,6 +43,7 @@ class DS3231:
         self._time_buffer[0] = self.dec2bcd(datetime.seconds)
         self._time_buffer[1] = self.dec2bcd(datetime.minutes)
         self._time_buffer[2] = self.dec2bcd(datetime.hour)
+        self._time_buffer[3] = 0
         self._time_buffer[4] = self.dec2bcd(datetime.day)
         self._time_buffer[5] = self.dec2bcd(datetime.month) & 0xff
         self._time_buffer[6] = self.dec2bcd(int(str(datetime.year)[-2:]))
