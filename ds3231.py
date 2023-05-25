@@ -37,15 +37,15 @@ class DS3231:
         month = self.bcd2dec(self._time_buffer[5] & 0x7f)
         year = self.bcd2dec(self._time_buffer[6]) + 2000
 
-        return Date(year, month, day, hour, minutes, seconds)
+        return DateTime(year, month, day, hour, minutes, seconds)
 
-    def set_date(self, date):
-        self._time_buffer[0] = self.dec2bcd(date.seconds)
-        self._time_buffer[1] = self.dec2bcd(date.minutes)
-        self._time_buffer[2] = self.dec2bcd(date.hour)
-        self._time_buffer[4] = self.dec2bcd(date.day)
-        self._time_buffer[5] = self.dec2bcd(date.month) & 0xff
-        self._time_buffer[6] = self.dec2bcd(int(str(date.year)[-2:]))
+    def set_date(self, datetime):
+        self._time_buffer[0] = self.dec2bcd(datetime.seconds)
+        self._time_buffer[1] = self.dec2bcd(datetime.minutes)
+        self._time_buffer[2] = self.dec2bcd(datetime.hour)
+        self._time_buffer[4] = self.dec2bcd(datetime.day)
+        self._time_buffer[5] = self.dec2bcd(datetime.month) & 0xff
+        self._time_buffer[6] = self.dec2bcd(int(str(datetime.year)[-2:]))
 
         self.i2c.writeto_mem(self.addr, DATETIME_REG, self._time_buffer)
 
@@ -61,7 +61,7 @@ class DS3231:
         self.i2c.writeto_mem(self.addr, STATUS_REG, bytearray([reg_buffer[0] & 0x7f]))
 
 
-class Date:
+class DateTime:
     def __init__(self, year, month, day, hour, minutes, seconds):
         self.seconds = seconds
         self.minutes = minutes
@@ -70,5 +70,14 @@ class Date:
         self.month = month
         self.year = year
 
-    def datetime(self):
-        return (self.year, self.month, self.day, self.hour, self.minutes, self.seconds)
+    def to_iso_string(self):
+        month = str(self.month).zfill(2)
+        day = str(self.day).zfill(2)
+        hour = str(self.hour).zfill(2)
+        minutes = str(self.minutes).zfill(2)
+        seconds = str(self.seconds).zfill(2)
+
+        return f"{self.year}-{month}-{day}T{hour}:{minutes}:{seconds}.000Z"
+
+    def __str__(self):
+        return f"{self.year}, {self.month}, {self.day}, {self.hour}, {self.minutes}, {self.seconds}"
