@@ -23,9 +23,8 @@ class DS3231:
     def bcd2dec(self, bcd):
         return ((bcd >> 4) * 10) + (bcd & 0x0F)
 
-    def get_date(self, check_accuracy=False):
-        if check_accuracy and self.osf():
-            raise Exception("Oscillator stop flag set. Time may not be accurate.")
+    def get_datetime(self):
+        time_accurate = False if self.osf() else True
 
         self.i2c.readfrom_mem_into(self.addr, DATETIME_REG, self._time_buffer)
 
@@ -37,9 +36,9 @@ class DS3231:
         month = self.bcd2dec(self._time_buffer[5] & 0x7f)
         year = self.bcd2dec(self._time_buffer[6]) + 2000
 
-        return DateTime(year, month, day, hour, minutes, seconds)
+        return DateTime(year, month, day, hour, minutes, seconds), time_accurate
 
-    def set_date(self, datetime):
+    def set_datetime(self, datetime):
         self._time_buffer[0] = self.dec2bcd(datetime.seconds)
         self._time_buffer[1] = self.dec2bcd(datetime.minutes)
         self._time_buffer[2] = self.dec2bcd(datetime.hour)
