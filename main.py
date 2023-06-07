@@ -7,9 +7,11 @@ def main():
     rtc_module = ds3231.DS3231(i2c)
 
     if rtc_module.is_device_accessible():
-        # rtc_module.set_datetime(ds3231.DateTime(2023, 5, 24, 17, 10, 0))
+        # rtc_module.set_datetime(ds3231.DateTime(2023, 6, 7, 15, 7, 0))
 
-        datetime, time_accurate = rtc_module.get_datetime()
+        datetime = rtc_module.get_datetime()
+        time_accurate = rtc_module.is_time_accurate()
+
         print(f"Datetime: {datetime}, time accurate: {time_accurate}")
 
 
