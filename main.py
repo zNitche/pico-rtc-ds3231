@@ -3,16 +3,18 @@ import ds3231
 
 
 def main():
-    i2c = machine.I2C(0, sda=machine.Pin(0), scl=machine.Pin(1), freq=400000)
-    rtc_module = ds3231.DS3231(i2c)
+    i2c = machine.I2C(1, sda=machine.Pin(2), scl=machine.Pin(3))
 
-    if rtc_module.is_device_accessible():
-        # rtc_module.set_datetime(ds3231.DateTime(2023, 6, 7, 15, 7, 0))
+    rtc = ds3231.DS3231(i2c)
 
-        datetime = rtc_module.get_datetime()
-        time_accurate = rtc_module.is_time_accurate()
+    if rtc.is_device_accessible():
+        # current_datetime = ds3231.DateTime(2024, 7, 17, 10, 58, 0)
+        # rtc.set_datetime(current_datetime)
 
-        print(f"Datetime: {datetime}, time accurate: {time_accurate}")
+        datetime = rtc.get_datetime()
+        is_time_accurate = not rtc.is_osf_set()
+
+        print(f"Datetime: {datetime}, ISO Date: {datetime.to_iso_string()}, is time accurate: {is_time_accurate}")
 
 
 if __name__ == '__main__':
