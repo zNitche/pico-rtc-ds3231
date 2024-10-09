@@ -8,7 +8,10 @@ DEVICE_ADDRESS = const(0x68)
 
 
 class DateTime:
-    def __init__(self, year, month, day, hour, minutes, seconds):
+    def __init__(self,
+                 year: str | int, month: str | int, day: str | int,
+                 hour: str | int, minutes: str | int, seconds: str | int):
+
         self.seconds = int(seconds)
         self.minutes = int(minutes)
         self.hour = int(hour)
@@ -24,6 +27,21 @@ class DateTime:
         month = f"{self.month:02d}"
 
         return f"{self.year}-{month}-{day}T{hour}:{minutes}:{seconds}.000Z"
+
+    @staticmethod
+    def from_iso(iso_date: str):
+        split_date = iso_date.split(".")[0].split("T")
+        day_section = split_date[0].split("-")
+        time_section = split_date[1].split(":")
+
+        year = day_section[0]
+        month = day_section[1]
+        day = day_section[2]
+        hour = time_section[0]
+        minutes = time_section[1]
+        seconds = time_section[2]
+
+        return DateTime(year=year, month=month, day=day, hour=hour, minutes=minutes, seconds=seconds)
 
     def __str__(self):
         return f"{self.year}, {self.month}, {self.day}, {self.hour}, {self.minutes}, {self.seconds}"
